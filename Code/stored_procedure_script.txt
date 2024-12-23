@@ -1,0 +1,23 @@
+use gold_db
+go
+
+create or alter proc CreateSQLServerlessView_gold @viewName nvarchar(100)
+as
+begin
+
+declare @statement VARCHAR(MAX)
+
+SET @statement = N'CREATE or ALTER VIEW ' +@viewName + ' AS
+SELECT
+     *
+FROM
+    OPENROWSET(
+        BULK ''https://azurelearningprojectsa.dfs.core.windows.net/gold/SalesLT/' + @viewName + '/'',
+        FORMAT = ''DELTA''
+    ) AS [result]
+    '
+	
+EXEC(@statement)
+
+End
+go
